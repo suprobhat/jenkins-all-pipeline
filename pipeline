@@ -1,0 +1,58 @@
+def remote = [:]
+remote.name = 'test'
+remote.host = '3.110.171.181'
+remote.port = 22
+remote.allowAnyHosts = true
+
+
+pipeline {
+    agent any 
+    stages {
+        stage ('docker login') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub1', passwordVariable: 'pass', usernameVariable: 'uname')]) {
+                sh 'docker login -u $uname -p $pass'
+                
+}
+            }
+        }
+        stage('Cloning Git') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/subham258/subham.git']]])       
+            }
+        }
+    
+    // Building Docker images
+       stage('Building image') {
+            steps{
+              sh '''
+              docker build -t apache .
+              docker images
+              '''
+            }
+        }
+        stage('image push') {
+            steps{
+                sh '''
+                docker tag apache subham258/jenkinspipeline:apache-v1
+                docker push subham258/jenkinspipeline:apache-v1
+                '''
+                   
+            }
+            
+        }
+        stage('deployment') {
+            steps{
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'kubernetes', passwordVariable: 'pass', usernameVariable: 'uname')]) {
+                     remote.user=uname
+                     remote.password=pass
+                     sshPut remote: remote, from: "deployment.yml", into: "/home/test"
+                     sshCommand remote: remote, command: "kubectl apply -f deployment.yml"
+                     sshCommand remote: remote, command: "kubectl get deployment"
+                    }
+                }
+           }
+        }
+    }
+}
