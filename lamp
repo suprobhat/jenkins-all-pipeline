@@ -177,8 +177,10 @@ ServerToken prod
 REATE DATABASE <database name>;
         CREATE DATABASE
       CREATE USER ‘<user name>’@’localhost’ identified by‘passkey’;
-       grant all privileges on <database name>.* to ‘<user  name>’@’localhost’; (give permission for specific database)
+      grant all privileges on suvo . * to 'u1'@'localhost';(give permission for specific database)
 GRANT ALL PRIVILEGES ON * . * TO 'newuser'@'localhost'; (give permission for all database)
+
+ create user 'u1'@'localhost' identified by '1234';
 
 
 
