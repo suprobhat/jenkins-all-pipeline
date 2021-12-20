@@ -1,0 +1,42 @@
+pipeline {
+  agent none
+    stages {
+        parallel {
+        agent { label 'tamal' }
+        stage('Cloning Git') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'dd79f393-5885-42e0-981a-ecce4d511ab2', url: 'https://github.com/Python-World/python-mini-projects.git']]])       
+            
+                sh '''
+                ls
+                '''
+            }
+        }
+        stage('sonareqube'){
+            agent { label 'sonarqube' }
+             steps { 
+                   withSonarQubeEnv('sonareqube-server') {
+                        script {
+                           sh """
+                                 /opt/sonar-scanner/bin/sonar-scanner -v
+                                 /opt/sonar-scanner/bin/sonar-scanner -Dsonar.projectKey=suprobhatganguly -Dsonar.sources=. 
+                            """                               
+                        }
+                    }
+            }
+          }
+        stage ('deployment') {
+            agent { label 'tamal' }
+            steps {
+                sh '''
+                kubectl apply -f pv.yml
+                kubectl apply -f pv-claim.yml
+                kubectl apply -f deployment.yml
+                kubectl apply -f service.yml
+                cp -r ab.html /root/mnt/data
+                '''
+            }
+        }
+    }
+}
+}
