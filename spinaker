@@ -1,0 +1,55 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Cloning Git') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'dd79f393-5885-42e0-981a-ecce4d511ab2', url: 'https://github.com/suprobhat/docker.git']]])       
+            
+                sh '''
+                ls
+                '''
+            }
+        }
+        
+        stage ('docker login') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'pass', usernameVariable: 'uname')]) {
+                sh 'docker login -u $uname -p $pass'
+                }
+              }
+            }
+        
+    
+     //Building Docker images
+    stage('Building image') {
+      steps{
+        sh '''
+        docker build -t nginx .
+        docker images
+        '''
+      }
+    }
+     //push image Docker-hub
+    stage('image push'){
+     steps {
+        sh '''
+        docker tag nginx suprobhat1997/jenkins:nginx-v7
+        docker push suprobhat1997/jenkins:nginx-v7
+        '''
+       }
+     }
+     stage('trigger Spinnaker') {
+            steps {
+              script {
+                echo "trigger spinnaker"
+                    sh """
+                     curl  http://13.233.106.6:31306/webhooks/webhook/joy -X POST -H "content-type: application/json" -d '{"pipeline": "joy" }'
+                    """
+                }
+              }
+            }
+        
+        
+    }
+}
