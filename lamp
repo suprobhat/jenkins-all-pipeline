@@ -1,0 +1,184 @@
+sudo apt install mysql-server
+sudo mysql_secure_installation
+Confirm configuration syntax:
+	Sudo apache2ctl -t
+      Sudo apach2ctl configtest
+
+Step-8: Enable website:
+	Sudo a2ensite <file>.conf
+      Sudo a2enmod rewrite
+      
+       apache2ctl -M | grep ssl
+ 1365  sudo a2enmod ssl
+ 1366  systemctl restart apache2
+ 1367  apache2ctl -M | grep ssl
+ 1368  mkdir /etc/apache2/ssl
+ 1369  cd /etc/apache2/ssl/
+ 1370  openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/apache2/ssl/apache.key -out /etc/apache2/ssl/apache.crt
+Step -9:
+sudo apt-get install -y php7.4-cli php7.4-json php7.4-common  php7.4-mysql php7.4-zip php7.4-gd php7.4-mbstring php7.4-curl php7.4-xml php7.4-bcmath
+Step -10:
+
+
+mysqldump -P [port] -h [host] -u [username] -p [database] > dump.sql
+
+
+mysqldump -P 3306 -h 13.232.122.24 -u root -p  > dump.sql
+
+drop table table name;
+
+use databse name;
+
+mysql -u root -p databasename < table.sql
+
+read ony user
+
+create table tablename (name int);
+
+select * from table name;
+
+CREATE TABLE products_tbl(
+   -> product_id INT NOT NULL AUTO_INCREMENT,
+   -> product_name VARCHAR(100) NOT NULL,
+   -> product_manufacturer VARCHAR(40) NOT NULL,
+   -> submission_date DATE,
+   -> PRIMARY KEY ( product_id )
+   -> );
+
+insert into table_name (product_name,product_manufacturer,submission_date DATE,PRIMARY KEY) values (ab,computer)
+
+
+CREATE TABLE recipes (recipe_id INT NOT NULL,recipe_name VARCHAR(30) NOT NULL,PRIMARY KEY (recipe_id),UNIQUE (recipe_name));
+
+INSERT INTO recipes (recipe_id, recipe_name) VALUES (1,"Tacos"),(2,"Tomato Soup"),(3,"Grilled Cheese");
+
+select * from tablename;
+
+GRANT SELECT, SHOW VIEW ON <database_name>.* TO '<user_name>'@’localhost′ IDENTIFIED BY ‘<password>‘;
+
+select user from mysql.user;
+drop user <'user_name'>@localhost
+
+
+GRANT SELECT, SHOW VIEW ON db1.* TO 'u2'@'localhost' IDENTIFIED BY '1234';
+
+mysqldump --user=$user --password=$password $database
+
+
+
+
+sudo apt install software-properties-common 
+sudo add-apt-repository ppa:ondrej/php
+
+
+ZF3R0-FHED2-M80TY-8QYGC-NPKYF
+
+a2dismod php7.4
+a2enmod php5.6
+
+
+
+
+<VirtualHost *:80>
+     ServerAdmin admin@example.com
+     DocumentRoot /var/www/html/drupal/    (root path)
+     ServerName  example.com  
+     ServerAlias www.example.com
+     ErrorLog ${APACHE_LOG_DIR}/error.log
+     CustomLog ${APACHE_LOG_DIR}/access.log combined
+     <Directory /var/www/html/drupal/>
+            Options FollowSymlinks
+            AllowOverride All
+            Require all granted
+     </Directory>
+     <Directory /var/www/html/>
+            RewriteEngine on
+            RewriteBase /
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteCond %{REQUEST_FILENAME} !-d
+            RewriteRule ^(.*)$ index.php?q=$1 [L,QSA]
+    </Directory>
+</VirtualHost>
+
+
+
+
+<VirtualHost *:443>
+     ServerAdmin admin@a.com
+     DocumentRoot /var/www/html/drupal/
+     ServerName  a.com:443
+     ServerAlias www.a.com
+     SSLEngine on
+     SSLCertificateFile /etc/apache2/ssl/apache.crt
+     SSLCertificateKeyFile /etc/apache2/ssl/apache.key
+     ErrorLog ${APACHE_LOG_DIR}/error.log
+     CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+     <Directory /var/www/html/drupal/>
+            Options FollowSymlinks
+            AllowOverride All
+            Require all granted
+     </Directory>
+
+     <Directory /var/www/html/>
+            RewriteEngine on
+            RewriteBase /
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteCond %{REQUEST_FILENAME} !-d
+            RewriteRule ^(.*)$ index.php?q=$1 [L,QSA]
+    </Directory>
+</VirtualHost>
+
+<VirtualHost *:443>
+     ServerAdmin admin@e.com
+     DocumentRoot /var/www/drupal/
+     ServerName  e.com:443
+     ServerAlias www.e.com
+     SSLEngine on
+     SSLCertificateFile /etc/apache2/ssl/apache.crt
+     SSLCertificateKeyFile /etc/apache2/ssl/apache.key
+     ErrorLog ${APACHE_LOG_DIR}/error.log
+     CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+     <Directory /var/www/drupal/>
+            Options FollowSymlinks
+            AllowOverride All
+            Require all granted
+     </Directory>
+
+     <Directory /var/www/drupal/>
+            RewriteEngine on
+            RewriteBase /
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteCond %{REQUEST_FILENAME} !-d
+            RewriteRule ^(.*)$ index.php?q=$1 [L,QSA]
+    </Directory>
+</VirtualHost>
+
+sudo apt install software-properties-common 
+sudo add-apt-repository ppa:ondrej/php
+
+ServerName  e.com
+Redirect permanent / https://e.com
+
+
+
+
+The command above generates a 2048-bit private key and corresponding CRT. These will remain valid for 365 days and the files are placed into the new directory. The output of the above command will result in the following,
+
+:start line endlines/^/# 
+set nu
+
+etc/httpd/conf
+
+ServerSignature off
+ServerToken prod
+
+REATE DATABASE <database name>;
+        CREATE DATABASE
+      CREATE USER ‘<user name>’@’localhost’ identified by‘passkey’;
+       grant all privileges on <database name>.* to ‘<user  name>’@’localhost’; (give permission for specific database)
+GRANT ALL PRIVILEGES ON * . * TO 'newuser'@'localhost'; (give permission for all database)
+
+
+
