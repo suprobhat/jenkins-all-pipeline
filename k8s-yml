@@ -1,0 +1,625 @@
+Common Command :
+
+kubectl apply -f (create)
+kubectl get pods (check all pods)
+kubectl get all (check all running resource)
+kubectl delete pod <pod name> (to delete pods)
+Kubectl get pv (show the volume)
+Kubectl get pvc (show the Persistent Volume)
+
+
+
+
+Deployment
+First, you have to create a .yml file
+vim example.yml
+Then you have to write yml code according to your requirement. Here we give you one example. You can follow this one for your best practices.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+
+Now you have to save that file and exit from here.
+Now enter this command to apply the deployment
+kubectl apply -f <deployment file name>
+Now you can check your deployment status by running this command
+kubectl get all
+Or
+kubectl get deployment
+
+for deployment command line :
+
+kubectl create deploy newdeploy --image httpd --dry-run=client -o yaml > newdeploy.yml
+
+kubectl create deploy newdeploy --image httpd
+
+To delete deployment
+kubectl delete rs <application name>
+
+
+
+
+
+
+
+
+
+Replica
+First, you have to create a .yml file
+vim example.yml
+Then you have to write yml code according to your requirement. Here we give you one example. You can follow this one for your best practices.
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: myapp-rc
+  labels:
+    app: myapp
+    type: front-end
+spec:
+  template:
+    metadata:
+      name: myapp-pod
+      labels:
+        app: myapp
+        type: front-end
+    spec:
+      containers:
+        - name: nginx-controller
+          image: nginx
+  replicas: 10
+  selector:
+    matchLabels:
+      type: front-end
+
+Now you have to save that file and exit from here.
+Now enter this command to apply the deployment replica
+kubectl apply -f <replica file name>
+Now you can check your deployment status by running this command
+kubectl get all
+kubectl get rc -w
+
+Services
+service:
+1. cluster ip - communicate between internal
+2. node port
+3. load balancer
+4. external name- cname record map with service
+Nodeport:- 
+First you have to create a .yml file
+vim example.yml
+Then you have to write yml code according to your requirement. Here we give you one example. You can follow this one for your best practices.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: nginx
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 80
+      nodePort: 31000
+
+Now you have to save that file and exit from here.
+Now enter this command to apply the service.
+kubectl apply -f <service file name>
+Now you can check your running service status by running this command
+kubectl get svc
+
+for service in command line
+kubectl expose deployment <name> --type <service_type> --port <port>
+[example:
+kubectl expose deployment newdeploy --type NodePort --port 80]     (nodeport)
+
+
+Namespace
+To get all namespaces including default run this command
+kubectl get namespaces
+kubectl get all
+kubectl get all -n
+kubectl get all -n dev
+kubectl apply -f deployment.yml -n dev
+kubectl get all -n dev
+kubectl create ns quc
+kubectl get ns
+Kubernetes cronjob
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: hello
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: hello
+            image: busybox
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - -c
+            - date; echo Hello from the Kubernetes cluster
+          restartPolicy: OnFailure
+
+Kubectl apply -f  example.yml
+Kuberctl get cronjob
+
+
+
+
+
+Install metrix server
+To install a metrix server follow these steps and commands. (version may vary)
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.5.1/components.yaml
+kubectl -n kube-system edit deployments.apps metrics-server
+add this under the image section-
+command:
+        - /metrics-server
+        - --kubelet-insecure-tls
+        - --kubelet-preferred-address-types=InternalIP
+
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.5.1/components.yaml
+kubectl top nodes
+kubectl top pods
+
+                                          HPA (Horizontal Pod Autoscaling)
+
+hpa.yml create  ( horizontal auto scaling)
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: myapp-deployment
+spec:
+  maxReplicas: 5
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: myapp-deployment
+  targetCPUUtilizationPercentage: 20
+
+Nginx deployment yaml create
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deployment
+  labels:
+    app: myapp
+    type: front-end
+spec:
+  template:
+    metadata:
+      name: myapp-pod
+      labels:
+        app: myapp
+        type: front-end
+    spec:
+      containers:
+        - name: nginx-controller
+          image: nginx
+          resources:
+            limits:
+              cpu: "50m"
+            requests:
+              cpu: "50m"
+  selector:
+    matchLabels:
+      type: front-end
+
+Create service yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: myapp
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 80
+      nodePort: 31000
+
+checking load: kubectl get hpa
+
+To create a load
+First you have to install siege
+apt install siege
+open deployment file
+Vim <deployment file name.yml> 
+copy inside label app and type content 
+kubectl get svc
+create service file or choose any previous service file
+vim <service file name.yml>
+remove app and paste under the selector
+kubectl apply -f <service name file>
+kubectl get all
+siege -q -c 5 -t 2m http://<ip>:<port>
+open duplicate tab
+watch -n 2 "kubectl get all"
+
+return to main tab
+open deployment file
+edit cpu request 30
+then apply and run the siege command again
+
+
+
+
+
+
+
+
+PV,PVC CREATE
+First, you have to create a .yml file 
+vim pv.yml
+then paste it
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: task-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+
+kubectl apply -f pv.yml
+
+then you have to create a .yml file 
+vim pvc.yml
+then paste it
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: task-pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
+kubectl apply -f pvc.yml
+kubectl get pv
+kubectl get pvc
+
+
+
+
+
+(to mount with pod)
+
+then you have to create a .yml file
+vim pvmount.yml
+then paste it
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: task-pv-pod
+spec:
+  volumes:
+    - name: task-pv-storage
+      persistentVolumeClaim:
+        claimName: task-pv-claim
+  containers:
+    - name: task-pv-container
+      image: nginx
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:
+        - mountPath: "/usr/share/nginx/html"
+          name: task-pv-storage
+
+kubectl apply -f pvmount.yml
+cd /mnt/data
+echo "hello world" > index.html
+kubectl get all
+kubectl exec -it task-pv-pod bash
+cd /usr/share/nginx/html
+ls
+cat index.html
+
+
+
+
+
+
+
+Config Map
+First, you have to create a .yml file and write this code:
+vim <configmap file name.yml> 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-suprobhat
+data:
+  channelname: "suprobhat"
+  channelowner: "ganguly"
+  channeladdress: "kolkta"
+
+Now save & exit.
+After that run this command 
+kubectl apply -f <configmap file name.yml>
+                    
+Secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: suprobhat-secret
+type: Opaque
+data:
+  username: c3Vwcm9iaGF0
+  password: Z2FuZ3VseQ==
+
+
+The create a pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secret-test-pod
+spec:
+  containers:
+    - name: test-container
+      image: nginx
+      volumeMounts:
+        - name: secret-volume
+          mountPath: /etc/secret-volume  
+  volumes:
+    - name: secret-volume
+      secret:
+        secretName:  suprobhat-secret
+
+Then apply the pod.yml file 
+Then go to the pod 
+Then type command : 
+           echo "$( cat /etc/secret-volume/username )"
+                echo "$( cat /etc/secret-volume/password )"
+
+
+               Create base 64
+  echo -n "name" | base64
+Deploying WordPress on Kubernetes with Persistent Volumes
+
+When deploying WordPress using a custom configuration, you need to create a yaml file for WordPress and the database the app will be using. Here we use MySQL as a database. 
+Create a customization.yaml file and add a secret generator.
+
+cat <<EOF >./kustomization.yaml
+secretGenerator:
+- name: mysql-pass
+  literals:
+  - password=YOUR_PASSWORD
+EOF
+[ here you need to set your own password ]
+kubectl create secret generic mysql-pass --from-literal=password=YOUR_PASSWORD
+[ here you need to set your own password ] for command line
+
+
+Then you have to create mysql-deployment.yaml and wordpress-deployment.yaml respectively.
+
+Mysql-deployment.yaml:-
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-mysql
+  labels:
+    app: wordpress
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: wordpress
+    tier: mysql
+  clusterIP: None
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-mysql
+  labels:
+    app: wordpress
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+      tier: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: mysql
+    spec:
+      containers:
+      - image: mysql:5.6
+        name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password
+        ports:
+        - containerPort: 3306
+          name: mysql
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+  labels:
+    app: wordpress
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+ 
+
+
+Wordpress-deployment.yaml:-
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: wordpress
+    tier: frontend
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: frontend
+    spec:
+      containers:
+      - image: wordpress:4.8-apache
+        name: wordpress
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: wordpress-mysql
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password
+        ports:
+        - containerPort: 80
+          name: wordpress
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: wp-pv
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wp-pv-claim
+  labels:
+    app: wordpress
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+ 
+
+Now you have to add these yaml files in customization.yaml file
+
+cat <<EOF >>./kustomization.yaml
+resources:
+  - mysql-deployment.yaml
+  - wordpress-deployment.yaml
+EOF
+Now you have to apply and verify
+kubectl apply -k ./
+
+Delete all deployment and services and pods and volume and Persistent volume delete command 
+Kubectl delete -k ./
+
+Kubernetes Dashboard
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.4.0/aio/deploy/recommended.yaml
+
+kubectl create serviceaccount dashboard-admin-sa (create service account)
+
+kubectl create clusterrolebinding dashboard-admin-sa --clusterrole=cluster-admin --serviceaccount=default:dashboard-admin-sa
+
+(dashboard admin account bindeing)
+
+kubectl get secrets -n kubernetes-dashboard
+
+kubectl get secret $(kubectl get serviceaccount dashboard-admin-sa -o jsonpath="{.secrets[0].name}") -o jsonpath={.data.token} | base64 --decode
+
+( secret token check for admin account)
+
+kubectl get secrets        (check secret key)
+
+
+kubectl describe secret dashboard-admin ( your secret name)
+
+kubectl -n kubernetes-dashboard get svc
