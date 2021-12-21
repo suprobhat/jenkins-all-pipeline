@@ -1,0 +1,17 @@
+kubectl autoscale deployment subham --min=2 --max=5 --cpu-percent=20 --dry-run=client -o yaml > hpa.yaml
+kubectl create svc nodeport nginx --tcp=80 --dry-run=client -o yaml > service.yaml
+kubectl rollout status deployment subham
+   19  kubectl rollout deployment subham
+   20  kubectl rollout status deployment subham
+   21  kubectl rollout history deployment subham
+   22  kubectl set image deployment subham nginx=nginx:1.14 --record
+   23  kubectl rollout history deployment subham
+   24  kubectl rollout undo deployment subham --to-revision 1
+   25  kubectl rollout status deployment subham
+   26  kubectl describe deployment subham
+   27  kubectl set image deployment subham nginx=nginx:1.14 --record
+   28  kubectl describe deployment subham
+   29  kubectl rollout undo deployment subham --to-revision 3
+   30  kubectl describe deployment subham
+   31  kubectl rollout status deployment subham
+   32  kubectl rollout history deployment subham
