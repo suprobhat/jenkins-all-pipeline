@@ -7,9 +7,7 @@ kubectl delete pod <pod name> (to delete pods)
 Kubectl get pv (show the volume)
 Kubectl get pvc (show the Persistent Volume)
 
-
-
-
+-----------------------------------------------------------------
 Deployment
 First, you have to create a .yml file
 vim example.yml
@@ -36,7 +34,7 @@ spec:
         image: nginx:1.14.2
         ports:
         - containerPort: 80
-
+---------------------------------------------------------------
 Now you have to save that file and exit from here.
 Now enter this command to apply the deployment
 kubectl apply -f <deployment file name>
@@ -54,14 +52,7 @@ kubectl create deploy newdeploy --image httpd
 To delete deployment
 kubectl delete rs <application name>
 
-
-
-
-
-
-
-
-
+-----------------------------------------------------------------------------
 Replica
 First, you have to create a .yml file
 vim example.yml
@@ -131,7 +122,7 @@ for service in command line
 kubectl expose deployment <name> --type <service_type> --port <port>
 [example:
 kubectl expose deployment newdeploy --type NodePort --port 80]     (nodeport)
-
+-----------------------------------------------------------------------
 
 Namespace
 To get all namespaces including default run this command
@@ -167,7 +158,7 @@ spec:
 
 Kubectl apply -f  example.yml
 Kuberctl get cronjob
-
+------------------------------------------------------------------
 
 
 
@@ -353,12 +344,7 @@ cd /usr/share/nginx/html
 ls
 cat index.html
 
-
-
-
-
-
-
+----------------------------------------------------------
 Config Map
 First, you have to create a .yml file and write this code:
 vim <configmap file name.yml> 
@@ -413,7 +399,7 @@ Then type command :
                Create base 64
   echo -n "name" | base64
 Deploying WordPress on Kubernetes with Persistent Volumes
-
+---------------------------------------------------------------
 When deploying WordPress using a custom configuration, you need to create a yaml file for WordPress and the database the app will be using. Here we use MySQL as a database. 
 Create a customization.yaml file and add a secret generator.
 
@@ -623,7 +609,7 @@ kubectl get secrets        (check secret key)
 kubectl describe secret dashboard-admin ( your secret name)
 
 kubectl -n kubernetes-dashboard get svc
-
+----------------------------------------------------
 Kubernetes cronjob
 
 apiVersion: batch/v1
@@ -648,6 +634,8 @@ spec:
 
 Kubectl apply -f  example.yml
 Kuberctl get cronjob
+----------------------------------------------------------------------------------------
+
                                                    Job
 
 apiVersion: batch/v1
