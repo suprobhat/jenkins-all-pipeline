@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deploy
+  labels:
+    run: nginx
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      run: nginx
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  minReadySeconds: 5
+  revisionHistoryLimit: 10
+  template:
+    metadata:
+      labels:
+        run: nginx
+    spec:
+      containers:
+      - image: nginx:1.14
+        name: nginx
+        
+--------------------------------
+        kubectl apply -f roleout.yml
+  297  kubectl get all
+  298  kubectl rollout history nginx-deploy
+  300  kubectl rollout status nginx-deploy
+  301  kubectl rollout status deployment nginx-deploy
+  302  kubectl set image deployment nginx-deploy nginx=nginx:latest
+  303  kubectl rollout status deployment nginx-deploy
+  304  kubectl set image deployment nginx-deploy nginx=nginx:1.14.6 --record
+  305  kubectl describe deployment nginx-deplo
+  306  history
